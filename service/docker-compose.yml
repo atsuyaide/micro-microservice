@@ -1,0 +1,27 @@
+version: "3"
+
+services:
+  app:
+    container_name: "app"
+    build: ./app
+    logging:
+      # ログ出力先にfluentdを指定
+      driver: "fluentd"
+      options:
+        # fluentdサーバの宛先
+        fluentd-address: "localhost:24224"
+        # ログに付与するタグ
+        tag: "docker.{{.Name}}"
+    ports:
+      - "8000:8000"
+    depends_on:
+      - fluentd
+
+  fluentd:
+    container_name: "fluentd"
+    build: ./fluentd
+    volumes:
+      - ./fluentd/config:/fluentd/etc
+    ports:
+      - "24224:24224"
+      - "24224:24224/udp"
