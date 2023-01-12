@@ -9,3 +9,8 @@ services:
     ports:
       - "24224:24224"
       - "24224:24224/udp"
+
+networks:
+  default:
+    external: true
+    name: micro-microservice-network

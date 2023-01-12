@@ -67,5 +67,5 @@ services:
 
 networks:
   default:
-    external:
-      name: iot_network
+    external: true
+    name: micro-microservice-network
