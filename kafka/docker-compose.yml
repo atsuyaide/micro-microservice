@@ -19,6 +19,8 @@ services:
     ports:
       - "9092:9092"
       - "29092:29092"
+    volumes:
+      - ./opt/:/opt/
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: "zookeeper:32181"
@@ -26,44 +28,6 @@ services:
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       CONFLUENT_SUPPORT_METRICS_ENABLE: "false"
-
-  cli:
-    image: confluentinc/cp-kafka:5.5.1
-    hostname: cli
-    container_name: cli
-    depends_on:
-      - kafka
-    entrypoint: /bin/sh
-    tty: true
-
-  ksql-server:
-    image: confluentinc/cp-ksql-server:5.4.3
-    hostname: ksql-server
-    container_name: ksql-server
-    depends_on:
-      - kafka
-    ports:
-      - "8088:8088"
-    environment:
-      KSQL_CONFIG_DIR: "/etc/ksql"
-      KSQL_LOG4J_OPTS: "-Dlog4j.configuration=file:/etc/ksql/log4j-rolling.properties"
-      KSQL_BOOTSTRAP_SERVERS: "kafka:29092"
-      KSQL_HOST_NAME: ksql-server
-      KSQL_APPLICATION_ID: "IoT-demo-1"
-      KSQL_LISTENERS: "http://0.0.0.0:8088"
-      KSQL_CACHE_MAX_BYTES_BUFFERING: 0
-      KSQL_AUTO_OFFSET_RESET: "earliest"
-
-  ksql-cli:
-    image: confluentinc/cp-ksql-cli:5.4.3
-    container_name: ksql-cli
-    volumes:
-      - $PWD/ksql.commands:/tmp/ksql.commands
-    depends_on:
-      - kafka
-      - ksql-server
-    entrypoint: /bin/sh
-    tty: true
 
 networks:
   default:
